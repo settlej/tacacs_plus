@@ -339,7 +339,7 @@ class TACACSAuthenticationContinue(object):
             'user_msg_len: %s' % len(self.password),
             'data_len: 0',
             'flags: 0',
-            'user_msg: %s' % self.password
+            'user_msg: %s' % ('*' * len(self.password))
         ])
 
 
