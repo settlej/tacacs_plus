@@ -8,6 +8,20 @@ from .flags import (
     TAC_PLUS_VIRTUAL_PORT, TAC_PLUS_VIRTUAL_REM_ADDR
 )
 
+def as_bytes(b, encoding='latin-1'):
+    """IFF b is not already bytes, convert to bytes
+    
+    bytes => bytes
+    unicode => bytes 
+    int => unicode => bytes
+    """
+    if isinstance(b,bytes):
+        return b 
+    if not isinstance(b, six.string_types):
+        return str(b)
+    if isinstance(b, six.text_type):
+        return b.encode(encoding)
+    return b
 
 class TACACSAuthorizationStart(object):
 
@@ -50,10 +64,10 @@ class TACACSAuthorizationStart(object):
 
         # B = unsigned char
         # s = char[]
-        username = six.b(self.username)
-        rem_addr = six.b(self.rem_addr)
-        port = six.b(self.port)
-        arguments = self.arguments
+        username = as_bytes(self.username)
+        rem_addr = as_bytes(self.rem_addr)
+        port = as_bytes(self.port)
+        arguments = [as_bytes(arg) for arg in self.arguments]
         body = struct.pack(
             'B' * 8,
             self.authen_method,
@@ -70,12 +84,14 @@ class TACACSAuthorizationStart(object):
         for value in (username, port, rem_addr):
             body += struct.pack('%ds' % len(value), value)
         for value in arguments:
+            if not isinstance(value,bytes):
+                value = value.encode('latin-1')
             body += struct.pack('%ds' % len(value), value)
         return body
 
     def __str__(self):
         return ', '.join([
-            'args: %s' % b','.join(self.arguments),
+            'args: %s' % b','.join([as_bytes(arg) for arg in self.arguments]),
             'args_cnt: %d' % len(self.arguments),
             'authen_method: %s' % self.authen_method,
             'authen_type: %s' % self.authen_type,
