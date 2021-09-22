@@ -50,12 +50,12 @@ def crypt(header, body_bytes, secret):
         struct.pack('B', header.version) +
         struct.pack('B', header.seq_no)
     )
-    pad = hashed = md5(unhashed).digest()
+    pad = hashed = md5(unhashed,usedforsecurity=False).digest()
 
     if (len(pad) < body_length):
         # remake hash, appending it to pad until pad >= header.length
         while True:
-            hashed = md5(unhashed + hashed).digest()
+            hashed = md5(unhashed + hashed,usedforsecurity=False).digest()
             pad += hashed
             if len(pad) >= body_length:
                 break

@@ -449,7 +449,7 @@ def test_authenticate_chap(fake_socket, packets):
         data=(
             six.b('A') +
             six.b('challenge') +
-            md5(six.b('Apasschallenge')).digest()
+            md5(six.b('Apasschallenge'),usedforsecurity=False).digest()
         )
     ).packed == first_body
 

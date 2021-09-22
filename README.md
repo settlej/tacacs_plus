@@ -124,18 +124,28 @@ authen = cli.authenticate('username', 'password')
 print("PASS!" if authen.valid else "FAIL!")
 
 # authorize user and command
-author = cli.authorize('username', arguments=[b"service=shell", b"cmd=show", b"cmdargs=version"])
+author = cli.authorize('username', arguments=[b"service=shell", b"cmd=show", b"cmd-arg=version"])
 print("PASS!" if author.valid else "FAIL!")
 
+# authorize cisco cli privilage-level
+cliauthor = cli.authorize('username', arguments=[b"service=shell", b"cmd=*"])
+
+# authorize cisco cli get optional av-pairs (* means retrieve optional)
+cliauthor = cli.authorize('username', arguments=[b"service=shell", b"cisco-av-pair*"]) #the avpair was named cisco-av-pair
+# or
+cliauthor = cli.authorize('username', arguments=[b"service=shell", b"custom_av_name*"])
+cliauthor.arguments = [avpairs1,avpair2] # returns avpair list
+
 # start accounting session for command
-acct = cli.account('username', TAC_PLUS_ACCT_FLAG_START, arguments=[b"service=shell", b"cmd=show", b"cmdargs=version"])
+acct = cli.account('username', TAC_PLUS_ACCT_FLAG_START, arguments=[b"service=shell", b"cmd=show", b"cmd-arg=version"])
 print("PASS!" if acct.valid else "FAIL!")
 
 # continue accounting session for another command
-acct = cli.account('username', TAC_PLUS_ACCT_FLAG_WATCHDOG, arguments=[b"service=shell", b"cmd=debug", b"cmdargs=aaa"])
+acct = cli.account('username', TAC_PLUS_ACCT_FLAG_WATCHDOG, arguments=[b"service=shell", b"cmd=debug", b"cmd-arg=aaa"])
 print("PASS!" if acct.valid else "FAIL!")
 
 # close accounting session
 acct = cli.account('username', TAC_PLUS_ACCT_FLAG_STOP, arguments=[b"service=shell", b"cmd=exit"])
 print("PASS!" if acct.valid else "FAIL!")
 ```
+

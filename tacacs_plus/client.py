@@ -194,7 +194,7 @@ class TACACSClient(object):
                     six.b(chap_challenge) +
                     md5(six.b(
                         chap_ppp_id + password + chap_challenge
-                    )).digest()
+                    ),usedforsecurity=False).digest()
                 )
         with self.closing():
             packet = self.send(
